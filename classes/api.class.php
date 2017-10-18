@@ -1,4 +1,4 @@
-<?
+<?php
     abstract class API {
         /**
          * Property: method
@@ -30,7 +30,7 @@
             header("Content-Type: application/json");
 
             $this->args = $aRequest;
-            $this->endpoint = array_shift($this->args);
+            $this->endpoint = rtrim(array_shift($this->args), '/');
             if(array_key_exists(0, $this->args) && !is_numeric($this->args[0])) {
                 $this->verb = array_shift($this->args);
             }
@@ -48,13 +48,12 @@
                     $this->_response('Invalid Method', 405);
                     break;
             }
-            var_dump($this->request);
             $this->verifyKey($this->request['apiKey']);
             $this->processAPI();
         }
 
          public function processAPI() {
-            if ((int)method_exists($this, $this->endpoint) > 0) {
+            if((int)method_exists($this, $this->endpoint) > 0) {
                 return $this->_response($this->{$this->endpoint}($this->args));
             }
             return $this->_response("No Endpoint: $this->endpoint", 404);
@@ -63,6 +62,7 @@
         private function _response($aData, $iStatus = 200) {
             header("HTTP/1.1 " . $iStatus . " " . $this->_requestStatus($iStatus));
             
+            echo json_encode($aData);
             return json_encode($aData);
         }
 
