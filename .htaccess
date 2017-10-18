@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteBase /
+
+RewriteRule api/customer/(.*)$ customer.php?request=$1 [QSA,NC,L]
